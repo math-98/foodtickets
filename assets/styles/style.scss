@@ -1,0 +1,26 @@
+/*
+Template Name: Admin Template
+Author: Niravjoshi / Wrappixel
+File: scss
+*/
+
+//(Required file)
+@import "variable";
+
+// Import Bootstrap source files (Required file)
+@import "bootstrap/scss/bootstrap";
+
+//This is for the components (Required file)
+@import "components";
+
+//This is for the widgets (Required file)
+@import "widgets/widgets";
+
+//This is for the responsive (Required file)
+@import "responsive";
+
+// Dependencies
+@import "@fortawesome/fontawesome-free/css/all.css";
+@import "@mdi/font/css/materialdesignicons.css";
+@import "float-chart";
+@import "themify-icons/themify-icons.css";
