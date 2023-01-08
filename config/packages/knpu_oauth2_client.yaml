@@ -1,0 +1,14 @@
+knpu_oauth2_client:
+    clients:
+        # configure your clients as described here: https://github.com/knpuniversity/oauth2-client-bundle#configuration
+        laravel_passport:
+            type: generic
+            provider_class: App\Security\Oauth\LaravelPassportProvider
+
+            client_id: '%env(OAUTH_ID)%'
+            client_secret: '%env(OAUTH_SECRET)%'
+            provider_options:
+                base_auth_uri: '%env(OAUTH_BASE_URI)%'
+
+            redirect_route: oauth_check
+            redirect_params: {}

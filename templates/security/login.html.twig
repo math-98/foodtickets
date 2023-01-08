@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+    <div class="auth-wrapper d-flex no-block justify-content-center align-items-center bg-dark">
+        <div class="auth-box bg-dark border-top border-bottom border-secondary">
+            <div class="text-center pt-3 pb-3 mb-3">
+                <img src="{{ asset('images/payment.png') }}" alt="logo" height="28">
+                <span class="h3 mb-0 text-white ps-2 align-middle">math98-foodtickets</span>
+            </div>
+
+            <div class="d-grid mb-3">
+                <a href="{{ path('laravelpassport_connect') }}" class="btn btn-primary">
+                    <i class="fas fa-sign-in me-2"></i>
+                    Se connecter
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
