@@ -1,0 +1,120 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .form-check-label {
+            margin-bottom: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="module">
+        $(document).ready(function() {
+            const accountElm = $('#{{ form.account.vars.id }}');
+            function onAccountChange() {
+                const price = accountElm.find(':selected').data('price');
+                const monthlyAmountElm = $('#{{ form.monthly_amount.vars.id }}');
+                const monthlyAmountPrefixElm = $('#{{ form.monthly_amount.vars.id }}_prefix');
+                const monthlyAmountSuffixElm = $('#{{ form.monthly_amount.vars.id }}_suffix');
+
+                monthlyAmountElm.prop('disabled', !accountElm.val());
+                if (!accountElm.val()) {
+                    monthlyAmountPrefixElm.hide();
+                    monthlyAmountSuffixElm.hide();
+                } else {
+                    monthlyAmountPrefixElm.toggle(price === '');
+                    monthlyAmountSuffixElm.toggle(price !== '');
+                }
+
+                if (price !== '') {
+                    monthlyAmountSuffixElm.text(' x ' + price + ' €');
+                    monthlyAmountElm.attr('inputmode', 'numeric');
+                } else {
+                    monthlyAmountElm.attr('inputmode', 'decimal');
+                }
+            }
+            accountElm.change(onAccountChange);
+            onAccountChange();
+
+            const receptionDelayedElm = $('#{{ form.reception_delayed.vars.id }}');
+            function onReceptionDelayedChange() {
+                $('#{{ form.reception_delayed.vars.id }}_help').text(
+                    'Réception au début du mois'
+                    + (receptionDelayedElm.prop('checked') ? ' suivant' : '')
+                );
+            }
+            receptionDelayedElm.change(onReceptionDelayedChange);
+            onReceptionDelayedChange();
+
+            const billingDelayedElm = $('#{{ form.billing_delayed.vars.id }}');
+            function onBillingDelayedChange() {
+                $('#{{ form.billing_delayed.vars.id }}_help').text(
+                    'Facturation à la fin du mois'
+                    + (billingDelayedElm.prop('checked') ? ' suivant' : '')
+                );
+            }
+            billingDelayedElm.change(onBillingDelayedChange);
+            onBillingDelayedChange();
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-6">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.account) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    {{ form_row(form.start) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.end) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-4 mb-3">
+                    {{ form_label(form.monthly_amount) }}
+                    {{ form_errors(form.monthly_amount) }}
+                    <div class="input-group">
+                        <span class="input-group-text" id="{{ form.monthly_amount.vars.id }}_prefix" style="display: none;">€</span>
+                        {{ form_widget(form.monthly_amount, {
+                            'attr': {
+                                'disabled': true,
+                            }
+                        }) }}
+                        <span class="input-group-text" id="{{ form.monthly_amount.vars.id }}_suffix" style="display: none;"></span>
+                    </div>
+                    {{ form_help(form.monthly_amount) }}
+                </div>
+                <div class="col-4 pt-3">
+                    {{ form_row(form.reception_delayed) }}
+                </div>
+                <div class="col-4 pt-3">
+                    {{ form_row(form.billing_delayed) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6 d-grid">
+                    <a href="{{ path('app_contract_index') }}" class="btn btn-secondary">Annuler</a>
+                </div>
+                <div class="col-6 d-grid">
+                    <input type="submit" class="btn btn-primary" value="{{ button_label|default('Sauvegarder') }}"/>
+                </div>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
