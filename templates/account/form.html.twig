@@ -1,0 +1,23 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.individualPrice) }}
+
+                <div class="row">
+                    <div class="col-6 d-grid">
+                        <a href="{{ path('app_account_index') }}" class="btn btn-secondary">Annuler</a>
+                    </div>
+                    <div class="col-6 d-grid">
+                        <input type="submit" class="btn btn-primary" value="{{ button_label|default('Sauvegarder') }}"/>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,22 @@
+<div class="modal fade" id="deleteModal-{{ account.id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ account.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="deleteModalLabel-{{ account.id }}">
+                    Supprimer le compte {{ account.name }}
+                </h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p>Etes vous sur de vouloir supprimer ce compte ?</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <form method="post" action="{{ path('app_account_delete', {'id': account.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ account.id) }}">
+                    <button class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
