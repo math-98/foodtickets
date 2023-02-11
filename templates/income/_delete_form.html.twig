@@ -1,0 +1,23 @@
+<div class="modal fade" id="deleteModal-{{ income.period|date('Y-m') }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ income.period|date('Y-m') }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="deleteModalLabel-{{ income.period|date('Y-m') }}">
+                    Supprimer le versement de {{ income.period|format_date(locale='fr', pattern='MMMM yyyy')|capitalize }}
+                    de {{ income.contract.name }}
+                </h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p>Etes vous sur de vouloir supprimer ce versement ?</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <form method="post" action="{{ path('app_income_delete', {'id': income.contract.id, 'period': income.period|date('Y-m')}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ income.contract.id ~ '-' ~ income.period|date('Y-m')) }}">
+                    <button class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
