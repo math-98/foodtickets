@@ -55,6 +55,9 @@
                         <td>
                             <div class="d-grid">
                                 <div class="btn-group">
+                                    <a class="btn btn-info" href="{{ path('app_income_index', {'id': contract.id}) }}">
+                                        <i class="fas fa-calendar"></i>
+                                    </a>
                                     <a class="btn btn-success" href="{{ path('app_contract_edit', {'id': contract.id}) }}">
                                         <i class="fas fa-pencil"></i>
                                     </a>

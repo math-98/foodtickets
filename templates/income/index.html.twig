@@ -1,0 +1,169 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Versements {{ contract.name }}{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Période</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Prévu</th>
+                        <th scope="col">Facturé</th>
+                        <th scope="col">Reçu</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for income in incomes %}
+                        <tr>
+                            <td>{{ income.period|format_date(locale='fr', pattern='MMMM yyyy')|capitalize }}</td>
+                            {% if income.id %}
+                                <td>{{ income.description }}</td>
+                                <td
+                                    {% if loop.last and contract.receptionDelayed %}
+                                        class="bg-secondary"
+                                    {% endif %}
+                                >
+                                    {% if not loop.last or not contract.receptionDelayed %}
+                                        {% if contract.account.individualPrice %}
+                                            {{ income.planned|round }} x {{ contract.account.individualPrice }}
+                                        {% else %}
+                                            {{ income.planned }}
+                                        {% endif %}
+                                        €
+                                    {% endif %}
+                                </td>
+                                <td
+                                    {% if (loop.first and contract.billingDelayed) or
+                                          (loop.last and contract.receptionDelayed) %}
+                                        class="bg-secondary"
+                                    {% endif %}
+                                >
+                                    {% if (not loop.first or not contract.billingDelayed) and
+                                          (not loop.last or not contract.receptionDelayed) %}
+                                        {% if contract.account.individualPrice %}
+                                            {{ income.billed|round }} x {{ contract.account.individualPrice }}
+                                        {% else %}
+                                            {{ income.billed }}
+                                        {% endif %}
+                                        €
+                                    {% endif %}
+                                </td>
+                                <td
+                                    {% if loop.first and contract.receptionDelayed %}
+                                        class="bg-secondary"
+                                    {% endif %}
+                                >
+                                    {% if not loop.first or not contract.receptionDelayed %}
+                                        {% if contract.account.individualPrice %}
+                                            {{ income.received|round }} x {{ contract.account.individualPrice }}
+                                        {% else %}
+                                            {{ income.received }}
+                                        {% endif %}
+                                        €
+                                    {% endif %}
+                                </td>
+                            {% else %}
+                                <td colspan="4" class="fst-italic text-center text-muted">Pas de versement</td>
+                            {% endif %}
+                            <td>
+                                {% if income.id %}
+                                    <div class="d-grid">
+                                        <div class="btn-group">
+                                            <a href="{{ path('app_income_edit', {'id': income.contract.id, 'period': income.period|date('Y-m')}) }}" class="btn btn-success">
+                                                <i class="fas fa-pencil"></i>
+                                            </a>
+                                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ income.period|date('Y-m') }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                        {% include 'income/_delete_form.html.twig' %}
+                                    </div>
+                                {% else %}
+                                    <div class="d-grid">
+                                        <a href="{{ path('app_income_edit', {'id': income.contract.id, 'period': income.period|date('Y-m')}) }}" class="btn btn-primary">
+                                            <i class="fas fa-plus"></i>
+                                            Ajouter
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="text-end">Total</td>
+                        <td>
+                            {% if contract.account.individualPrice %}
+                                {{ totalPlanned|round }} x {{ contract.account.individualPrice }}
+                            {% else %}
+                                {{ totalPlanned }}
+                            {% endif %}
+                            €
+
+                            {% if offsetPlanned != 0 %}
+                                (+
+                                {% if contract.account.individualPrice %}
+                                    {{ offsetPlanned|round }})
+                                {% else %}
+                                    {{ offsetPlanned }} €)
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td
+                            {% if totalBilled > totalPlanned %}
+                                class="bg-danger text-white"
+                            {% elseif totalBilled < totalPlanned %}
+                                class="bg-success"
+                            {% endif %}
+                        >
+                            {% if contract.account.individualPrice %}
+                                {{ totalBilled|round }} x {{ contract.account.individualPrice }}
+                            {% else %}
+                                {{ totalBilled }}
+                            {% endif %}
+                            €
+
+                            {% if offsetBilled != 0 %}
+                                (+
+                                {% if contract.account.individualPrice %}
+                                    {{ offsetBilled|round }})
+                                {% else %}
+                                    {{ offsetBilled }} €)
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td
+                            {% if totalReceived > totalPlanned %}
+                                class="bg-success"
+                            {% elseif totalReceived < totalPlanned %}
+                                class="bg-danger text-white"
+                            {% endif %}
+                        >
+                            {% if contract.account.individualPrice %}
+                                {{ totalReceived|round }} x {{ contract.account.individualPrice }}
+                            {% else %}
+                                {{ totalReceived }}
+                            {% endif %}
+                            €
+
+                            {% if offsetReceived != 0 %}
+                                (+
+                                {% if contract.account.individualPrice %}
+                                    {{ offsetReceived|round }})
+                                {% else %}
+                                    {{ offsetReceived }} €)
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
