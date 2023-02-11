@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ContractRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -35,6 +37,15 @@ class Contract
 
     #[ORM\Column]
     private ?bool $billing_delayed = null;
+
+    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: ContractIncome::class, orphanRemoval: true)]
+    #[ORM\OrderBy(['period' => 'ASC'])]
+    private Collection $incomes;
+
+    public function __construct()
+    {
+        $this->incomes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -89,6 +100,19 @@ class Contract
         return $this;
     }
 
+    public function getLastPeriod(): ?\DateTimeInterface
+    {
+        if (is_null($this->end)) {
+            return null;
+        }
+
+        if ($this->reception_delayed || $this->billing_delayed) {
+            return (clone $this->end)->modify('last day of next month');
+        } else {
+            return $this->end;
+        }
+    }
+
     public function getMonthlyAmount(): ?string
     {
         return $this->monthly_amount;
@@ -121,6 +145,36 @@ class Contract
     public function setBillingDelayed(bool $billing_delayed): self
     {
         $this->billing_delayed = $billing_delayed;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ContractIncome>
+     */
+    public function getIncomes(): Collection
+    {
+        return $this->incomes;
+    }
+
+    public function addIncome(ContractIncome $income): self
+    {
+        if (!$this->incomes->contains($income)) {
+            $this->incomes->add($income);
+            $income->setContract($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIncome(ContractIncome $income): self
+    {
+        if ($this->incomes->removeElement($income)) {
+            // set the owning side to null (unless already changed)
+            if ($income->getContract() === $this) {
+                $income->setContract(null);
+            }
+        }
 
         return $this;
     }

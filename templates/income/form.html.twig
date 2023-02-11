@@ -1,0 +1,79 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}
+    Versement de {{ form.vars.data.period|format_date(locale='fr', pattern='MMMM yyyy')|capitalize }}
+    de {{ form.vars.data.contract.name }}
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                {{ form_row(form.description) }}
+
+                {% set colsize = 12 / (form.vars.data.isPlanned + form.vars.data.isBilled + form.vars.data.isReceived) %}
+                <div class="row mb-3">
+                    {% if form.vars.data.isPlanned %}
+                        <div class="col-{{ colsize }}">
+                            {{ form_label(form.planned) }}
+                            {{ form_errors(form.planned) }}
+                            <div class="input-group">
+                                {% if not form.vars.data.contract.account.individualPrice %}
+                                    <span class="input-group-text">€</span>
+                                {% endif %}
+                                {{ form_widget(form.planned) }}
+                                {% if form.vars.data.contract.account.individualPrice %}
+                                    <span class="input-group-text"> x {{ form.vars.data.contract.account.individualPrice }} €</span>
+                                {% endif %}
+                            </div>
+                            {{ form_help(form.planned) }}
+                        </div>
+                    {% endif %}
+                    {% if form.vars.data.isBilled %}
+                        <div class="col-{{ colsize }}">
+                            {{ form_label(form.billed) }}
+                            {{ form_errors(form.billed) }}
+                            <div class="input-group">
+                                {% if not form.vars.data.contract.account.individualPrice %}
+                                    <span class="input-group-text">€</span>
+                                {% endif %}
+                                {{ form_widget(form.billed) }}
+                                {% if form.vars.data.contract.account.individualPrice %}
+                                    <span class="input-group-text"> x {{ form.vars.data.contract.account.individualPrice }} €</span>
+                                {% endif %}
+                            </div>
+                            {{ form_help(form.billed) }}
+                        </div>
+                    {% endif %}
+                    {% if form.vars.data.isReceived %}
+                        <div class="col-{{ colsize }}">
+                            {{ form_label(form.received) }}
+                            {{ form_errors(form.received) }}
+                            <div class="input-group">
+                                {% if not form.vars.data.contract.account.individualPrice %}
+                                    <span class="input-group-text">€</span>
+                                {% endif %}
+                                {{ form_widget(form.received) }}
+                                {% if form.vars.data.contract.account.individualPrice %}
+                                    <span class="input-group-text"> x {{ form.vars.data.contract.account.individualPrice }} €</span>
+                                {% endif %}
+                            </div>
+                            {{ form_help(form.received) }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="row">
+                    <div class="col-6 d-grid">
+                        <a class="btn btn-secondary" href="{{ path('app_income_index', {'id': form.vars.data.contract.id}) }}">
+                            Retour
+                        </a>
+                    </div>
+                    <div class="col-6 d-grid">
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
