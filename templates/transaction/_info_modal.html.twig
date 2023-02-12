@@ -1,0 +1,33 @@
+<div class="modal fade" id="infoModal-{{ transaction.id }}" tabindex="-1" aria-labelledby="infoModalLabel-{{ transaction.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="infoModalLabel-{{ transaction.id }}">
+                    Transaction "{{ transaction.description }}"
+                </h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ transaction.transactionLines|length }} transaction(s)</p>
+                <ul>
+                    {% for line in transaction.transactionLines %}
+                        <li>
+                            {% if line.amount > 0 %}Crédit{% else %}Débit{% endif %} :
+                            {{ line.amount|abs }}
+                            {% if line.account.individualPrice %}
+                                x {{ line.account.individualPrice }} € =
+                                {{ line.amount|abs * line.account.individualPrice }}
+                            {% endif %}
+                            €
+                            {% if line.amount > 0 %}sur{% else %}depuis{% endif %}
+                            le compte "{{ line.account.name }}"
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>

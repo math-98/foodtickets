@@ -25,9 +25,13 @@ class Account
     #[ORM\OneToMany(mappedBy: 'account', targetEntity: Contract::class)]
     private Collection $contracts;
 
+    #[ORM\OneToMany(mappedBy: 'account', targetEntity: TransactionLine::class, orphanRemoval: true)]
+    private Collection $transactions;
+
     public function __construct()
     {
         $this->contracts = new ArrayCollection();
+        $this->transactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,6 +87,36 @@ class Account
             // set the owning side to null (unless already changed)
             if ($contract->getAccount() === $this) {
                 $contract->setAccount(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TransactionLine>
+     */
+    public function getTransactions(): Collection
+    {
+        return $this->transactions;
+    }
+
+    public function addTransactionLine(TransactionLine $transactionLine): self
+    {
+        if (!$this->transactions->contains($transactionLine)) {
+            $this->transactions->add($transactionLine);
+            $transactionLine->setAccount($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransactionLine(TransactionLine $transactionLine): self
+    {
+        if ($this->transactions->removeElement($transactionLine)) {
+            // set the owning side to null (unless already changed)
+            if ($transactionLine->getAccount() === $this) {
+                $transactionLine->setAccount(null);
             }
         }
 
