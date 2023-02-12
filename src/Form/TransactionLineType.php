@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Account;
 use App\Entity\TransactionLine;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -18,7 +19,14 @@ class TransactionLineType extends AbstractType
             ->add('account', EntityType::class, [
                 'label' => false,
                 'class' => 'App\Entity\Account',
-                'choice_label' => 'name',
+                'choice_label' => function (Account $account) {
+                    $label = $account->getName().' ('.$account->getBalance();
+                    if ($account->getIndividualPrice()) {
+                        $label .= ' x '.$account->getIndividualPrice();
+                    }
+
+                    return $label.' €)';
+                },
                 'placeholder' => 'Choisir un compte',
                 'row_attr' => [
                     'class' => 'col-3',
