@@ -18,6 +18,7 @@
                         <th>#</th>
                         <th>Nom</th>
                         <th>Type</th>
+                        <th>Solde</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -34,6 +35,13 @@
                                 <i class="fas fa-credit-card-alt"></i>
                                 Carte
                             {% endif %}
+                        </td>
+                        <td>
+                            {{ account.balance }}
+                            {% if account.individualPrice %}
+                                x {{ account.individualPrice }}
+                            {% endif %}
+                            €
                         </td>
                         <td>
                             <div class="d-grid">

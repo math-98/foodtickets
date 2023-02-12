@@ -122,4 +122,20 @@ class Account
 
         return $this;
     }
+
+    public function getBalance(): string
+    {
+        $balance = 0;
+        $balance += $this->contracts->reduce(function (float $balance, Contract $contract) {
+            return $balance + $contract->getIncomes()->reduce(function (float $balance, ContractIncome $income) {
+                return $balance + $income->getReceived();
+            }, 0.0);
+        }, 0.0);
+
+        $balance += $this->transactions->reduce(function (float $balance, TransactionLine $transaction) {
+            return $balance + $transaction->getAmount();
+        }, 0.0);
+
+        return $balance;
+    }
 }
