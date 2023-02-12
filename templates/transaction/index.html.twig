@@ -1,0 +1,72 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Transactions{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="d-grid mb-3 dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="addTransactionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-plus"></i>
+                    Ajouter une transaction
+                </button>
+                <ul class="dropdown-menu w-100" aria-labelledby="addTransactionDropdown">
+                    {% for kType,type in types %}
+                        <li><a class="dropdown-item" href="{{ path('app_transaction_new', {'type': kType}) }}">
+                            <i class="{{ type['icon'] }} me-1"></i>
+                            {{ type['name'] }}
+                        </a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Montant</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.id }}</td>
+                        <td>
+                            <i class="{{ types[transaction.type]['icon'] }}"></i>
+                            {{ types[transaction.type]['name'] }}
+                        </td>
+                        <td>{{ transaction.date|date('d/m/y H:i') }}</td>
+                        <td>{{ transaction.description }}</td>
+                        <td>{{ transaction.amount }} €</td>
+                        <td>
+                            <div class="d-grid">
+                                <div class="btn-group">
+                                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#infoModal-{{ transaction.id }}">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                    <a class="btn btn-success" href="{{ path('app_transaction_edit', {'id': transaction.id}) }}">
+                                        <i class="fas fa-pencil"></i>
+                                    </a>
+                                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ transaction.id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                {% include 'transaction/_info_modal.html.twig' %}
+                                {% include 'transaction/_delete_form.html.twig' %}
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td class="text-center" colspan="5">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
