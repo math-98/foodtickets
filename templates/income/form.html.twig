@@ -17,15 +17,12 @@
                         <div class="col-{{ colsize }}">
                             {{ form_label(form.planned) }}
                             {{ form_errors(form.planned) }}
-                            <div class="input-group">
-                                {% if not form.vars.data.contract.account.individualPrice %}
-                                    <span class="input-group-text">€</span>
-                                {% endif %}
-                                {{ form_widget(form.planned) }}
-                                {% if form.vars.data.contract.account.individualPrice %}
-                                    <span class="input-group-text"> x {{ form.vars.data.contract.account.individualPrice }} €</span>
-                                {% endif %}
-                            </div>
+                            <amount-input
+                                name="{{ form.planned.vars.full_name }}"
+                                :value="{{ form.planned.vars.value }}"
+                                :price="{{ form.vars.data.contract.account.individualPrice|default(0) }}"
+                            ></amount-input>
+                            {% do form.planned.setRendered %}
                             {{ form_help(form.planned) }}
                         </div>
                     {% endif %}
@@ -33,15 +30,12 @@
                         <div class="col-{{ colsize }}">
                             {{ form_label(form.billed) }}
                             {{ form_errors(form.billed) }}
-                            <div class="input-group">
-                                {% if not form.vars.data.contract.account.individualPrice %}
-                                    <span class="input-group-text">€</span>
-                                {% endif %}
-                                {{ form_widget(form.billed) }}
-                                {% if form.vars.data.contract.account.individualPrice %}
-                                    <span class="input-group-text"> x {{ form.vars.data.contract.account.individualPrice }} €</span>
-                                {% endif %}
-                            </div>
+                            <amount-input
+                                name="{{ form.billed.vars.full_name }}"
+                                :value="{{ form.billed.vars.value }}"
+                                :price="{{ form.vars.data.contract.account.individualPrice|default(0) }}"
+                            ></amount-input>
+                            {% do form.billed.setRendered %}
                             {{ form_help(form.billed) }}
                         </div>
                     {% endif %}
@@ -49,15 +43,12 @@
                         <div class="col-{{ colsize }}">
                             {{ form_label(form.received) }}
                             {{ form_errors(form.received) }}
-                            <div class="input-group">
-                                {% if not form.vars.data.contract.account.individualPrice %}
-                                    <span class="input-group-text">€</span>
-                                {% endif %}
-                                {{ form_widget(form.received) }}
-                                {% if form.vars.data.contract.account.individualPrice %}
-                                    <span class="input-group-text"> x {{ form.vars.data.contract.account.individualPrice }} €</span>
-                                {% endif %}
-                            </div>
+                            <amount-input
+                                name="{{ form.received.vars.full_name }}"
+                                :value="{{ form.received.vars.value }}"
+                                :price="{{ form.vars.data.contract.account.individualPrice|default(0) }}"
+                            ></amount-input>
+                            {% do form.received.setRendered %}
                             {{ form_help(form.received) }}
                         </div>
                     {% endif %}
