@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TransactionLineRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TransactionLineRepository::class)]
 class TransactionLine
@@ -12,10 +13,12 @@ class TransactionLine
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['transaction:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'transactionLines')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['transaction:read'])]
     private ?Transaction $transaction = null;
 
     #[ORM\ManyToOne(inversedBy: 'transactions')]
@@ -23,7 +26,8 @@ class TransactionLine
     private ?Account $account = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
-    private ?string $amount = null;
+    #[Groups(['transaction:read'])]
+    private ?float $amount = null;
 
     public function getId(): ?int
     {
@@ -54,7 +58,13 @@ class TransactionLine
         return $this;
     }
 
-    public function getAmount(): ?string
+    #[Groups(['transaction:read'])]
+    public function getAccountId(): ?int
+    {
+        return $this->account->getId();
+    }
+
+    public function getAmount(): ?float
     {
         return $this->amount;
     }

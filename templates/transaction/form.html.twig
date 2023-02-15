@@ -2,36 +2,6 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% block javascripts %}
-    <script type="module">
-        $(document).ready(function() {
-            function addRemoveButtonListeners() {
-                const btns = $('.remove-line');
-
-                btns.off('click');
-                btns.click(function () {
-                    $(this).parents().eq(2).remove();
-                });
-            }
-
-            const transactionLinesElm = $('#{{ form.transactionLines.vars.id }}');
-            const prototype = transactionLinesElm.data('prototype');
-
-            let index = {{ form.vars.value.transactionLines|length }};
-            $('#addTransaction').click(function() {
-                transactionLinesElm.append(prototype.replace(/__name__/g, index++));
-                addRemoveButtonListeners();
-
-                return false
-            });
-            addRemoveButtonListeners();
-
-            const row_labels = $("<div class='row'><div class='col-3'><label class='form-label required'>Compte</label></div><div class='col-7'><label class='form-label required'>Montant</label></div></div>");
-            transactionLinesElm.prepend(row_labels);
-        });
-    </script>
-{% endblock %}
-
 {% block content %}
     <div class="card">
         <div class="card-body">
@@ -48,13 +18,12 @@
 
                 {{ form_row(form.description) }}
 
-                {{ form_row(form.transactionLines) }}
-                <div class="d-grid">
-                    <button id="addTransaction" class="btn btn-success">
-                        <i class="fas fa-plus"></i>
-                        Ajouter une ligne
-                    </button>
-                </div>
+                <transaction-lines
+                    :accounts="{{ accounts|serialize('json', { groups: 'account:read' }) }}"
+                    :errors="{{ transactionLineErrors|serialize('json') }}"
+                    :transactions="{{ form.vars.data.transactionLines|serialize('json', { groups: 'transaction:read' }) }}"
+                ></transaction-lines>
+                {% do form.transactionLines.setRendered %}
                 <hr/>
 
                 <div class="row">
