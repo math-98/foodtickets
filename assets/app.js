@@ -19,7 +19,13 @@ require('./sidebarmenu');
 require('./waves');
 
 import { createApp } from "vue/dist/vue.esm-bundler";
+import AmountInputComponent from './components/AmountInputComponent.vue';
+import ContractFormComponent from "./components/ContractFormComponent.vue";
+import TransactionLinesComponent from './components/TransactionLinesComponent.vue';
 const app = createApp({});
 
+app.component('amount-input', AmountInputComponent);
+app.component('contract-form', ContractFormComponent);
+app.component('transaction-lines', TransactionLinesComponent);
 app.mount('#main-wrapper');
 

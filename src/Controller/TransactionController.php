@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Transaction;
 use App\Form\TransactionType;
+use App\Repository\AccountRepository;
 use App\Repository\TransactionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -27,18 +28,24 @@ class TransactionController extends AbstractController
         Request $request,
         Transaction $transaction,
         TransactionRepository $transactionRepository,
+        AccountRepository $accountRepository,
         array $viewParams,
     ) {
         $form = $this->createForm(TransactionType::class, $transaction);
         $form->handleRequest($request);
 
+        $transactionLineErrors = [];
         if ($form->isSubmitted()) {
             foreach ($transaction->getTransactionLines() as $kLine => $line) {
                 if ($line->getAmount() < 0 && !Transaction::TYPES[$transaction->getType()]['outbound']) {
-                    $form->get('transactionLines')->get($kLine)->get('amount')->addError(new FormError('Ce type de transaction ne peut pas avoir de montant négatif'));
+                    $message = 'Ce type de transaction ne peut pas avoir de montant négatif.';
+                    $form->get('transactionLines')->get($kLine)->get('amount')->addError(new FormError($message));
+                    $transactionLineErrors[$kLine] = $message;
                 }
                 if ($line->getAmount() > 0 && !Transaction::TYPES[$transaction->getType()]['inbound']) {
-                    $form->get('transactionLines')->get($kLine)->get('amount')->addError(new FormError('Ce type de transaction ne peut pas avoir de montant positif'));
+                    $message = 'Ce type de transaction ne peut pas avoir de montant positif.';
+                    $form->get('transactionLines')->get($kLine)->get('amount')->addError(new FormError($message));
+                    $transactionLineErrors[$kLine] = $message;
                 }
             }
 
@@ -50,29 +57,31 @@ class TransactionController extends AbstractController
         }
 
         return $this->render('transaction/form.html.twig', array_merge($viewParams, [
+            'accounts' => $accountRepository->findAll(),
             'form' => $form,
+            'transactionLineErrors' => $transactionLineErrors,
         ]));
     }
 
     #[Route('/new/{type}', name: 'app_transaction_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, string $type, TransactionRepository $transactionRepository): Response
+    public function new(Request $request, string $type, TransactionRepository $transactionRepository, AccountRepository $accountRepository): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $transaction = new Transaction();
         $transaction->setType($type);
 
-        return $this->handleForm($request, $transaction, $transactionRepository, [
+        return $this->handleForm($request, $transaction, $transactionRepository, $accountRepository, [
             'title' => 'Nouvelle transaction ('.Transaction::TYPES[$type]['name'].')',
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_transaction_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Transaction $transaction, TransactionRepository $transactionRepository): Response
+    public function edit(Request $request, Transaction $transaction, TransactionRepository $transactionRepository, AccountRepository $accountRepository): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        return $this->handleForm($request, $transaction, $transactionRepository, [
+        return $this->handleForm($request, $transaction, $transactionRepository, $accountRepository, [
             'title' => 'Modifier la transaction',
             'btn_label' => 'Modifier',
         ]);

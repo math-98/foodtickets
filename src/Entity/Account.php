@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 class Account
@@ -14,13 +15,16 @@ class Account
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['account:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['account:read'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2, nullable: true)]
-    private ?string $individual_price = null;
+    #[Groups(['account:read'])]
+    private ?float $individual_price = null;
 
     #[ORM\OneToMany(mappedBy: 'account', targetEntity: Contract::class)]
     private Collection $contracts;
@@ -51,7 +55,7 @@ class Account
         return $this;
     }
 
-    public function getIndividualPrice(): ?string
+    public function getIndividualPrice(): ?float
     {
         return $this->individual_price;
     }
@@ -123,7 +127,8 @@ class Account
         return $this;
     }
 
-    public function getBalance(): string
+    #[Groups(['account:read'])]
+    public function getBalance(): float
     {
         $balance = 0;
         $balance += $this->contracts->reduce(function (float $balance, Contract $contract) {

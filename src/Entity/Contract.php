@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ContractRepository::class)]
 class Contract
@@ -14,9 +15,11 @@ class Contract
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['contract:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['contract:read'])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'contracts')]
@@ -24,18 +27,23 @@ class Contract
     private ?Account $account = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['contract:read'])]
     private ?\DateTimeInterface $start = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups(['contract:read'])]
     private ?\DateTimeInterface $end = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2, nullable: true)]
+    #[Groups(['contract:read'])]
     private ?string $monthly_amount = null;
 
     #[ORM\Column]
+    #[Groups(['contract:read'])]
     private ?bool $reception_delayed = null;
 
     #[ORM\Column]
+    #[Groups(['contract:read'])]
     private ?bool $billing_delayed = null;
 
     #[ORM\OneToMany(mappedBy: 'contract', targetEntity: ContractIncome::class, orphanRemoval: true)]
@@ -74,6 +82,12 @@ class Contract
         $this->account = $account;
 
         return $this;
+    }
+
+    #[Groups(['contract:read'])]
+    public function getAccountId(): ?int
+    {
+        return $this->account->getId();
     }
 
     public function getStart(): ?\DateTimeInterface
