@@ -17,3 +17,9 @@ require('sparkline');
 require('./custom');
 require('./sidebarmenu');
 require('./waves');
+
+import { createApp } from "vue/dist/vue.esm-bundler";
+const app = createApp({});
+
+app.mount('#main-wrapper');
+
