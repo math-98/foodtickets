@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Account;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,6 +18,9 @@ class AccountType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
+            ])
+            ->add('color', ColorType::class, [
+                'label' => 'Couleur',
             ])
             ->add('individualPrice', MoneyType::class, [
                 'required' => false,
