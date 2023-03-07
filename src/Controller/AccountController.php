@@ -29,6 +29,7 @@ class AccountController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $account = new Account();
+        $account->setColor('#'.substr(md5(rand()), 0, 6));
         $form = $this->createForm(AccountType::class, $account);
         $form->handleRequest($request);
 

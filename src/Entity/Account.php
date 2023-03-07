@@ -22,6 +22,10 @@ class Account
     #[Groups(['account:read'])]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255)]
+    #[Groups(['account:read'])]
+    private ?string $color = null;
+
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2, nullable: true)]
     #[Groups(['account:read'])]
     private ?float $individual_price = null;
@@ -51,6 +55,18 @@ class Account
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(string $color): self
+    {
+        $this->color = $color;
 
         return $this;
     }
