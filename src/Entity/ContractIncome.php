@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ContractIncomeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ContractIncomeRepository::class)]
 class ContractIncome
@@ -12,6 +13,7 @@ class ContractIncome
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['income:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'incomes')]
@@ -19,19 +21,24 @@ class ContractIncome
     private ?Contract $contract = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['income:read'])]
     private ?string $period = null;
 
     #[ORM\Column(length: 1024)]
+    #[Groups(['income:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
-    private ?string $planned = null;
+    #[Groups(['income:read'])]
+    private ?float $planned = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
-    private ?string $billed = null;
+    #[Groups(['income:read'])]
+    private ?float $billed = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
-    private ?string $received = null;
+    #[Groups(['income:read'])]
+    private ?float $received = null;
 
     public function getId(): ?int
     {
@@ -48,6 +55,12 @@ class ContractIncome
         $this->contract = $contract;
 
         return $this;
+    }
+
+    #[Groups(['income:read'])]
+    public function getContractId(): ?int
+    {
+        return $this->contract->getId();
     }
 
     public function getPeriod(): ?\DateTimeInterface
@@ -105,12 +118,12 @@ class ContractIncome
         return $this;
     }
 
-    public function getPlanned(): ?string
+    public function getPlanned(): ?float
     {
         return $this->planned;
     }
 
-    public function setPlanned(string $planned): self
+    public function setPlanned(float $planned): self
     {
         if (!$this->getIsPlanned()) {
             $this->planned = 0;
@@ -125,15 +138,15 @@ class ContractIncome
 
     public function getIsPlanned(): bool
     {
-        return !$this->isLastPeriod() || !$this->contract->isReceptionDelayed();
+        return !$this->isLatestPeriod() || !$this->contract->isReceptionDelayed();
     }
 
-    public function getBilled(): ?string
+    public function getBilled(): ?float
     {
         return $this->billed;
     }
 
-    public function setBilled(string $billed): self
+    public function setBilled(float $billed): self
     {
         if (!$this->getIsBilled()) {
             $this->billed = 0;
@@ -158,12 +171,12 @@ class ContractIncome
         return $isBilled;
     }
 
-    public function getReceived(): ?string
+    public function getReceived(): ?float
     {
         return $this->received;
     }
 
-    public function setReceived(string $received): self
+    public function setReceived(float $received): self
     {
         if (!$this->getIsReceived()) {
             $this->received = 0;
