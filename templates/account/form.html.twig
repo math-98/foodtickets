@@ -6,7 +6,17 @@
     <div class="card">
         <div class="card-body">
             {{ form_start(form) }}
-                {{ form_row(form.name) }}
+                <div class="row">
+                    <div class="col-9">
+                        {{ form_row(form.name) }}
+                    </div>
+                    <div class="col-3">
+                        {{ form_label(form.color) }}
+                        {{ form_errors(form.color) }}
+                        {{ form_widget(form.color, {'attr': {'class': 'w-100'}}) }}
+                        {{ form_help(form.color) }}
+                    </div>
+                </div>
                 {{ form_row(form.individualPrice) }}
 
                 <div class="row">
