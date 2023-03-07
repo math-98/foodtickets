@@ -11,9 +11,6 @@ import './styles/app.scss';
 global.$ = global.jQuery = require('jquery');
 global.bootstrap = require('bootstrap');
 
-require('flot');
-require('sparkline');
-
 require('./custom');
 require('./sidebarmenu');
 require('./waves');
@@ -21,11 +18,13 @@ require('./waves');
 import { createApp } from "vue/dist/vue.esm-bundler";
 import AmountInputComponent from './components/AmountInputComponent.vue';
 import ContractFormComponent from "./components/ContractFormComponent.vue";
+import HomeStatsComponent from "./components/HomeStatsComponent.vue";
 import TransactionLinesComponent from './components/TransactionLinesComponent.vue';
 const app = createApp({});
 
 app.component('amount-input', AmountInputComponent);
 app.component('contract-form', ContractFormComponent);
+app.component('home-stats', HomeStatsComponent);
 app.component('transaction-lines', TransactionLinesComponent);
 app.mount('#main-wrapper');
 

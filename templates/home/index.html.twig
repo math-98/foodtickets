@@ -1,0 +1,17 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <home-stats
+                :accounts="{{ accounts|serialize('json', { groups: 'account:read' }) }}"
+                :contracts="{{ contracts|serialize('json', { groups: 'contract:read' }) }}"
+                :incomes="{{ incomes|serialize('json', { groups: 'income:read' }) }}"
+                :transactions="{{ transactions|serialize('json', { groups: 'transaction:read' }) }}"
+                :transaction-lines="{{ transactionLines|serialize('json', { groups: 'transaction:read' }) }}"
+            ></home-stats>
+        </div>
+    </div>
+{% endblock %}
