@@ -1,4 +1,7 @@
 {
+    "bugsnag/bugsnag-symfony": {
+        "version": "v1.13.0"
+    },
     "doctrine/annotations": {
         "version": "1.14",
         "recipe": {
