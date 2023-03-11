@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Account;
 use App\Entity\Contract;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -16,6 +17,13 @@ use Symfony\Component\Validator\Constraints\Positive;
 
 class ContractType extends AbstractType
 {
+    private Security $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -24,6 +32,11 @@ class ContractType extends AbstractType
             ])
             ->add('account', EntityType::class, [
                 'class' => 'App\Entity\Account',
+                'query_builder' => function ($er) {
+                    return $er->createQueryBuilder('a')
+                        ->where('a.user = :userId')
+                        ->setParameter('userId', $this->security->getUser()->getId());
+                },
                 'choice_label' => 'name',
                 'label' => 'Compte',
                 'placeholder' => 'Choisissez un compte',

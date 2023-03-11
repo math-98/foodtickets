@@ -21,7 +21,7 @@ class ContractController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         return $this->render('contract/index.html.twig', [
-            'contracts' => $contractRepository->findAll(),
+            'contracts' => $contractRepository->findUserContracts($this->getUser()),
         ]);
     }
 
@@ -58,7 +58,10 @@ class ContractController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        return $this->handleForm($request, new Contract(), $contractRepository, $accountRepository, [
+        $contract = new Contract();
+        $contract->setUser($this->getUser());
+
+        return $this->handleForm($request, $contract, $contractRepository, $accountRepository, [
             'title' => 'Nouveau contrat',
         ]);
     }
@@ -66,7 +69,7 @@ class ContractController extends AbstractController
     #[Route('/{id}/edit', name: '_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Contract $contract, ContractRepository $contractRepository, AccountRepository $accountRepository): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('EDIT', $contract);
 
         return $this->handleForm($request, $contract, $contractRepository, $accountRepository, [
             'button_label' => 'Modifier',
@@ -77,7 +80,7 @@ class ContractController extends AbstractController
     #[Route('/{id}', name: '_delete', methods: ['POST'])]
     public function delete(Request $request, Contract $contract, ContractRepository $contractRepository): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('DELETE', $contract);
 
         if ($this->isCsrfTokenValid('delete'.$contract->getId(), $request->request->get('_token'))) {
             $contractRepository->remove($contract, true);

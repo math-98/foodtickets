@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Contract;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,6 +20,16 @@ class ContractRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Contract::class);
+    }
+
+    public function findUserContracts(User $user): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.user = :userId')
+            ->setParameter('userId', $user->getId())
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     public function save(Contract $entity, bool $flush = false): void
