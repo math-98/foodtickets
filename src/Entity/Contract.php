@@ -26,6 +26,10 @@ class Contract
     #[ORM\JoinColumn(nullable: false)]
     private ?Account $account = null;
 
+    #[ORM\ManyToOne(inversedBy: 'contracts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Groups(['contract:read'])]
     private ?\DateTimeInterface $start = null;
@@ -189,6 +193,18 @@ class Contract
                 $income->setContract(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

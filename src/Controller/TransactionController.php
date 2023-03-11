@@ -19,7 +19,7 @@ class TransactionController extends AbstractController
     public function index(TransactionRepository $transactionRepository): Response
     {
         return $this->render('transaction/index.html.twig', [
-            'transactions' => $transactionRepository->findAll(),
+            'transactions' => $transactionRepository->findUserTransactions($this->getUser()),
             'types' => Transaction::TYPES,
         ]);
     }
@@ -69,6 +69,7 @@ class TransactionController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $transaction = new Transaction();
+        $transaction->setUser($this->getUser());
         $transaction->setType($type);
 
         return $this->handleForm($request, $transaction, $transactionRepository, $accountRepository, [
@@ -79,7 +80,7 @@ class TransactionController extends AbstractController
     #[Route('/{id}/edit', name: '_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Transaction $transaction, TransactionRepository $transactionRepository, AccountRepository $accountRepository): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('EDIT', $transaction);
 
         return $this->handleForm($request, $transaction, $transactionRepository, $accountRepository, [
             'title' => 'Modifier la transaction',
@@ -90,6 +91,8 @@ class TransactionController extends AbstractController
     #[Route('/{id}', name: '_delete', methods: ['POST'])]
     public function delete(Request $request, Transaction $transaction, TransactionRepository $transactionRepository): Response
     {
+        $this->denyAccessUnlessGranted('DELETE', $transaction);
+
         if ($this->isCsrfTokenValid('delete'.$transaction->getId(), $request->request->get('_token'))) {
             $transactionRepository->remove($transaction, true);
         }

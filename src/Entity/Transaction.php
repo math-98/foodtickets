@@ -64,6 +64,10 @@ class Transaction
     #[ORM\OneToMany(mappedBy: 'transaction', targetEntity: TransactionLine::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $transactionLines;
 
+    #[ORM\ManyToOne(inversedBy: 'transactions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->transactionLines = new ArrayCollection();
@@ -162,5 +166,17 @@ class Transaction
 
             return $amount + $subAmount;
         }, 0.0);
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

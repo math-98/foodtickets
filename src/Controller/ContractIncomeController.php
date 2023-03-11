@@ -17,7 +17,7 @@ class ContractIncomeController extends AbstractController
     #[Route('/', name: '_index', methods: ['GET'])]
     public function index(Contract $contract): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('VIEW', $contract);
 
         /**
          * @var ContractIncome[] $incomes
@@ -96,7 +96,7 @@ class ContractIncomeController extends AbstractController
         string $period,
         ContractIncomeRepository $contractIncomeRepository
     ): Response {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ADD_INCOME', $contract);
 
         $periodObj = date_create($period.'-01');
         $income = $contractIncomeRepository->getContractIncomeByMonth($contract, $periodObj);
@@ -172,7 +172,7 @@ class ContractIncomeController extends AbstractController
         string $period,
         ContractIncomeRepository $contractIncomeRepository
     ): Response {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('DELETE_INCOME', $contract);
 
         $income = $contractIncomeRepository->getContractIncomeByMonth($contract, date_create($period.'-01'));
         if (!$income) {

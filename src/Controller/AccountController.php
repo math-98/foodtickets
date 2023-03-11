@@ -19,7 +19,7 @@ class AccountController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         return $this->render('account/index.html.twig', [
-            'accounts' => $accountRepository->findAll(),
+            'accounts' => $accountRepository->findUserAccounts($this->getUser()),
         ]);
     }
 
@@ -29,6 +29,7 @@ class AccountController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $account = new Account();
+        $account->setUser($this->getUser());
         $account->setColor('#'.substr(md5(rand()), 0, 6));
         $form = $this->createForm(AccountType::class, $account);
         $form->handleRequest($request);
@@ -48,7 +49,7 @@ class AccountController extends AbstractController
     #[Route('/{id}/edit', name: '_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Account $account, AccountRepository $accountRepository): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('EDIT', $account);
 
         $form = $this->createForm(AccountType::class, $account);
         $form->handleRequest($request);
@@ -69,7 +70,7 @@ class AccountController extends AbstractController
     #[Route('/{id}', name: '_delete', methods: ['POST'])]
     public function delete(Request $request, Account $account, AccountRepository $accountRepository): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('DELETE', $account);
 
         if ($this->isCsrfTokenValid('delete'.$account->getId(), $request->request->get('_token'))) {
             $accountRepository->remove($account, true);
