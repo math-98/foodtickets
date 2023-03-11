@@ -18,6 +18,10 @@ class Account
     #[Groups(['account:read'])]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'accounts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     #[ORM\Column(length: 255)]
     #[Groups(['account:read'])]
     private ?string $name = null;
@@ -158,5 +162,17 @@ class Account
         }, 0.0);
 
         return $balance;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }
