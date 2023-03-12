@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Contract;
 use App\Entity\ContractIncome;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,9 +18,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ContractIncomeRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private ContractRepository $contractRepository;
+
+    public function __construct(ManagerRegistry $registry, ContractRepository $contractRepository)
     {
         parent::__construct($registry, ContractIncome::class);
+
+        $this->contractRepository = $contractRepository;
     }
 
     public function getContractIncomeByMonth(Contract $contract, \DateTime $month): ?ContractIncome
@@ -28,6 +33,26 @@ class ContractIncomeRepository extends ServiceEntityRepository
             'contract' => $contract,
             'period' => $month->format('Y-m'),
         ]);
+    }
+
+    /**
+     * @return ContractIncome[]
+     */
+    public function findUserIncomes(User $user): array
+    {
+        $contractIds = $this->contractRepository
+            ->createQueryBuilder('c')
+            ->select('c.id')
+            ->where('c.user = :userId')
+            ->setParameter('userId', $user->getId())
+            ->getQuery()
+            ->getArrayResult();
+
+        return $this->createQueryBuilder('i')
+            ->where('i.contract IN (:contractIds)')
+            ->setParameter('contractIds', $contractIds)
+            ->getQuery()
+            ->getResult();
     }
 
     public function save(ContractIncome $entity, bool $flush = false): void
