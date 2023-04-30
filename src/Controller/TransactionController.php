@@ -6,6 +6,7 @@ use App\Entity\Transaction;
 use App\Form\TransactionType;
 use App\Repository\AccountRepository;
 use App\Repository\TransactionRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,10 +17,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class TransactionController extends AbstractController
 {
     #[Route('/', name: '_index', methods: ['GET'])]
-    public function index(TransactionRepository $transactionRepository): Response
+    public function index(Request $request, PaginatorInterface $paginator, TransactionRepository $transactionRepository): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $pagination = $paginator->paginate(
+            array_reverse($transactionRepository->findUserTransactions($this->getUser())),
+            $request->query->getInt('page', 1)
+        );
+
         return $this->render('transaction/index.html.twig', [
-            'transactions' => $transactionRepository->findUserTransactions($this->getUser()),
+            'transactions' => $pagination,
             'types' => Transaction::TYPES,
         ]);
     }
