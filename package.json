@@ -24,7 +24,7 @@
         "vue-chartjs": "^5.2.0",
         "vue-loader": "^17.0.1",
         "webpack": "^5.74.0",
-        "webpack-cli": "^4.10.0",
+        "webpack-cli": "^5.0.0",
         "webpack-notifier": "^1.15.0"
     },
     "license": "UNLICENSED",
