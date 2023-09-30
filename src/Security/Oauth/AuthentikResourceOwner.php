@@ -4,7 +4,7 @@ namespace App\Security\Oauth;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
-class LaravelPassportResourceOwner implements ResourceOwnerInterface
+class AuthentikResourceOwner implements ResourceOwnerInterface
 {
     private array $data;
 
@@ -16,9 +16,9 @@ class LaravelPassportResourceOwner implements ResourceOwnerInterface
     /**
      * Returns the identifier of the authorized resource owner.
      */
-    public function getId(): int
+    public function getId(): string
     {
-        return $this->data['id'];
+        return $this->data['sub'];
     }
 
     /**
@@ -30,27 +30,11 @@ class LaravelPassportResourceOwner implements ResourceOwnerInterface
     }
 
     /**
-     * Returns the avatar url of the authorized resource owner.
-     */
-    public function getAvatar(): string
-    {
-        return $this->data['avatar'];
-    }
-
-    /**
      * Returns the email of the authorized resource owner.
      */
     public function getEmail(): string
     {
         return $this->data['email'];
-    }
-
-    /**
-     * Returns the access level of the authorized resource owner.
-     */
-    public function getAccess(): int
-    {
-        return $this->data['access'];
     }
 
     /**

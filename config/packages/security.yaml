@@ -18,7 +18,7 @@ security:
             lazy: true
             provider: app_user_provider
             custom_authenticators:
-                - App\Security\LaravelPassportAuthenticator
+                - App\Security\AuthentikAuthenticator
                 - App\Security\ApiTokenAuthenticator
             logout:
                 path: app_logout

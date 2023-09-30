@@ -3,7 +3,7 @@
 namespace App\Security;
 
 use App\Repository\UserRepository;
-use App\Security\Oauth\LaravelPassportResourceOwner;
+use App\Security\Oauth\AuthentikResourceOwner;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
-class LaravelPassportAuthenticator extends OAuth2Authenticator implements AuthenticationEntryPointInterface
+class AuthentikAuthenticator extends OAuth2Authenticator implements AuthenticationEntryPointInterface
 {
     private RouterInterface $router;
     private ClientRegistry $clientRegistry;
@@ -45,17 +45,17 @@ class LaravelPassportAuthenticator extends OAuth2Authenticator implements Authen
 
     public function authenticate(Request $request): Passport
     {
-        $client = $this->clientRegistry->getClient('laravel_passport');
+        $client = $this->clientRegistry->getClient('authentik');
         $accessToken = $this->fetchAccessToken($client);
 
         return new SelfValidatingPassport(
             new UserBadge($accessToken->getToken(), function () use ($accessToken, $client) {
                 $passportUser = $client->fetchUserFromToken($accessToken);
-                if (!$passportUser instanceof LaravelPassportResourceOwner) {
-                    throw new \LogicException('Passport user must be an instance of LaravelPassportResourceOwner');
+                if (!$passportUser instanceof AuthentikResourceOwner) {
+                    throw new \LogicException('User must be an instance of AuthentikResourceOwner');
                 }
 
-                return $this->userRepository->findOrCreateFromLaravelPassport($passportUser);
+                return $this->userRepository->findOrCreateFromAuthentik($passportUser);
             })
         );
     }

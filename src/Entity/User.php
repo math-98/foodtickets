@@ -24,13 +24,7 @@ class User implements UserInterface
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $avatar = null;
-
-    #[ORM\Column]
-    private ?int $oauth_id = null;
-
-    #[ORM\Column]
-    private ?int $access = null;
+    private ?string $oauth_id = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Account::class, orphanRemoval: true)]
     private Collection $accounts;
@@ -88,48 +82,24 @@ class User implements UserInterface
 
     public function getAvatar(): ?string
     {
-        return $this->avatar;
+        return 'https://www.gravatar.com/avatar/'.md5($this->email);
     }
 
-    public function setAvatar(string $avatar): self
-    {
-        $this->avatar = $avatar;
-
-        return $this;
-    }
-
-    public function getOauthId(): ?int
+    public function getOauthId(): ?string
     {
         return $this->oauth_id;
     }
 
-    public function setOauthId(int $oauth_id): self
+    public function setOauthId(string $oauth_id): self
     {
         $this->oauth_id = $oauth_id;
 
         return $this;
     }
 
-    public function getAccess(): ?int
-    {
-        return $this->access;
-    }
-
-    public function setAccess(int $access): self
-    {
-        $this->access = $access;
-
-        return $this;
-    }
-
     public function getRoles(): array
     {
-        $roles = ['ROLE_USER'];
-        if ($this->access >= 5) {
-            $roles[] = 'ROLE_ADMIN';
-        }
-
-        return $roles;
+        return ['ROLE_USER'];
     }
 
     public function eraseCredentials()

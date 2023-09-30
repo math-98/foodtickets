@@ -9,7 +9,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 
-class LaravelPassportProvider extends AbstractProvider
+class AuthentikProvider extends AbstractProvider
 {
     use BearerAuthorizationTrait;
 
@@ -46,7 +46,7 @@ class LaravelPassportProvider extends AbstractProvider
      */
     public function getBaseAuthorizationUrl(): string
     {
-        return $this->getAuthUri().'/oauth/authorize';
+        return $this->getAuthUri().'/application/o/authorize/';
     }
 
     /**
@@ -56,7 +56,7 @@ class LaravelPassportProvider extends AbstractProvider
      */
     public function getBaseAccessTokenUrl(array $params): string
     {
-        return $this->getAuthUri().'/oauth/token';
+        return $this->getAuthUri().'/application/o/token/';
     }
 
     /**
@@ -64,7 +64,7 @@ class LaravelPassportProvider extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token): string
     {
-        return $this->getAuthUri().'/api/user';
+        return $this->getAuthUri().'/application/o/userinfo/';
     }
 
     /**
@@ -96,6 +96,6 @@ class LaravelPassportProvider extends AbstractProvider
      */
     protected function createResourceOwner(array $response, AccessToken $token): ResourceOwnerInterface
     {
-        return new LaravelPassportResourceOwner($response);
+        return new AuthentikResourceOwner($response);
     }
 }

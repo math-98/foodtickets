@@ -23,11 +23,11 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', ['error' => $error]);
     }
 
-    #[Route(path: '/oauth/redirect', name: 'laravelpassport_connect', methods: ['GET'])]
+    #[Route(path: '/oauth/redirect', name: 'authentik_connect', methods: ['GET'])]
     public function connect(ClientRegistry $clientRegistry)
     {
         return $clientRegistry
-            ->getClient('laravel_passport')
+            ->getClient('authentik')
             ->redirect();
     }
 

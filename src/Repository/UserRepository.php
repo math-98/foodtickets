@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use App\Security\Oauth\LaravelPassportResourceOwner;
+use App\Security\Oauth\AuthentikResourceOwner;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,7 +40,7 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOrCreateFromLaravelPassport(LaravelPassportResourceOwner $resourceOwner): User
+    public function findOrCreateFromAuthentik(AuthentikResourceOwner $resourceOwner): User
     {
         $em = $this->getEntityManager();
 
@@ -58,8 +58,6 @@ class UserRepository extends ServiceEntityRepository
 
         $user->setEmail($resourceOwner->getEmail());
         $user->setName($resourceOwner->getName());
-        $user->setAvatar($resourceOwner->getAvatar());
-        $user->setAccess($resourceOwner->getAccess());
         $em->flush();
 
         return $user;
