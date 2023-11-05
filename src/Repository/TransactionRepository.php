@@ -29,6 +29,7 @@ class TransactionRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
             ->where('t.user = :userId')
+            ->orderBy('t.date')
             ->setParameter('userId', $user->getId())
             ->getQuery()
             ->getResult()

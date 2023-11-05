@@ -161,7 +161,7 @@ class Account
             return $balance + $transaction->getAmount();
         }, 0.0);
 
-        return $balance;
+        return round($balance, 2);
     }
 
     public function getUser(): ?User
