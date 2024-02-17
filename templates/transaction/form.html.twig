@@ -18,11 +18,13 @@
 
                 {{ form_row(form.description) }}
 
-                <transaction-lines
+                <transaction-lines-group
                     :accounts="{{ accounts|serialize('json', { groups: 'account:read' }) }}"
                     :errors="{{ transactionLineErrors|serialize('json') }}"
+                    :inbound-enabled="{{ constant('App\\Entity\\Transaction::TYPES')[form.vars.data.type].inbound ? 'true' : 'false' }}"
+                    :outbound-enabled="{{ constant('App\\Entity\\Transaction::TYPES')[form.vars.data.type].outbound ? 'true' : 'false' }}"
                     :transactions="{{ form.vars.data.transactionLines|serialize('json', { groups: 'transaction:read' }) }}"
-                ></transaction-lines>
+                ></transaction-lines-group>
                 {% do form.transactionLines.setRendered %}
                 <hr/>
 

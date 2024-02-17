@@ -19,12 +19,14 @@ import { createApp } from "vue/dist/vue.esm-bundler";
 import AmountInputComponent from './components/AmountInputComponent.vue';
 import ContractFormComponent from "./components/ContractFormComponent.vue";
 import HomeStatsComponent from "./components/HomeStatsComponent.vue";
-import TransactionLinesComponent from './components/TransactionLinesComponent.vue';
+import TransactionLinesGroupComponent from './components/TransactionLinesGroupComponent.vue';
+import TransactionLineComponent from './components/TransactionLineComponent.vue';
 const app = createApp({});
 
 app.component('amount-input', AmountInputComponent);
 app.component('contract-form', ContractFormComponent);
 app.component('home-stats', HomeStatsComponent);
-app.component('transaction-lines', TransactionLinesComponent);
+app.component('transaction-lines-group', TransactionLinesGroupComponent);
+app.component('transaction-line', TransactionLineComponent);
 app.mount('#main-wrapper');
 
