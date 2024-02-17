@@ -19,7 +19,7 @@
                             {{ form_errors(form.planned) }}
                             <amount-input
                                 name="{{ form.planned.vars.full_name }}"
-                                :value="{{ form.planned.vars.value }}"
+                                :model-value="'{{ form.planned.vars.value }}'"
                                 :price="{{ form.vars.data.contract.account.individualPrice|default(0) }}"
                             ></amount-input>
                             {% do form.planned.setRendered %}
@@ -32,7 +32,7 @@
                             {{ form_errors(form.billed) }}
                             <amount-input
                                 name="{{ form.billed.vars.full_name }}"
-                                :value="{{ form.billed.vars.value }}"
+                                :model-value="'{{ form.billed.vars.value }}'"
                                 :price="{{ form.vars.data.contract.account.individualPrice|default(0) }}"
                             ></amount-input>
                             {% do form.billed.setRendered %}
@@ -45,7 +45,7 @@
                             {{ form_errors(form.received) }}
                             <amount-input
                                 name="{{ form.received.vars.full_name }}"
-                                :value="{{ form.received.vars.value }}"
+                                :model-value="'{{ form.received.vars.value }}'"
                                 :price="{{ form.vars.data.contract.account.individualPrice|default(0) }}"
                             ></amount-input>
                             {% do form.received.setRendered %}

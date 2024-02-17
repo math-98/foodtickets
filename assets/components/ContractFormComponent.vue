@@ -57,7 +57,7 @@
       <label for="contract_monthly_amount" class="form-label">Montant mensuel</label>
       <amount-input
           name="contract[monthly_amount]"
-          :value="contractData.monthly_amount"
+          v-model="contractData.monthly_amount"
           :price="(account) ? account.individual_price : -1"
       ></amount-input>
       <div id="contract_monthly_amount_help" class="form-text mb-0 help-text">

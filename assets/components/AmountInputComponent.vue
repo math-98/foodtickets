@@ -3,10 +3,11 @@
     <span class="input-group-text" v-if="!price">€</span>
     <input
         type="text"
+        min="0"
         :name="name"
-        :value="value"
         :inputmode="(price > 0) ? 'numeric' : 'decimal'"
         :disabled="price < 0"
+        v-model="value"
         v-bind:class="inputClass"
     >
     <span class="input-group-text" v-if="price > 0">
@@ -24,25 +25,37 @@ export default {
       this.inputClass.push('is-invalid');
     }
   },
+  computed: {
+    value: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        value = value.replace(',', '.');
+        this.$emit('update:modelValue', value);
+      },
+    },
+  },
   data() {
     return {
       inputClass: [],
     }
   },
+  emits: ['update:modelValue'],
   props: {
     error: {
       type: String,
     },
-    name: {
+    modelValue: {
       type: String,
       required: true,
+    },
+    name: {
+      type: String
     },
     price: {
       type: Number,
       default: -1,
-    },
-    value: {
-      type: Number,
     },
   },
 }
