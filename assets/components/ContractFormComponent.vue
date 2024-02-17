@@ -54,13 +54,13 @@
 
   <div class="row mb-3">
     <div class="col-4">
-      <label for="contract_monthly_amount" class="form-label">Montant mensuel</label>
+      <label for="contract_amount" class="form-label">Montant</label>
       <amount-input
-          name="contract[monthly_amount]"
-          v-model="contractData.monthly_amount"
+          name="contract[amount]"
+          v-model="contractData.amount"
           :price="(account) ? account.individual_price : -1"
       ></amount-input>
-      <div id="contract_monthly_amount_help" class="form-text mb-0 help-text">
+      <div id="contract_amount_help" class="form-text mb-0 help-text">
         Laisser vide si le montant est variable (Forfait réel)
       </div>
     </div>
@@ -111,9 +111,7 @@ export default {
     if (this.contractData.end !== null) {
       this.contractData.end = (new Date(this.contractData.end)).toISOString().substring(0, 10);
     }
-    if (this.contractData.monthly_amount !== null) {
-      this.contractData.monthly_amount = Number(this.contractData.monthly_amount);
-    }
+    this.contractData.amount = Number(this.contractData.amount);
     this.contractData.billing_delayed = (this.contractData.billing_delayed == 1);
     this.contractData.reception_delayed = (this.contractData.reception_delayed == 1);
   },

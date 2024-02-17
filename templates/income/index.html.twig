@@ -22,50 +22,47 @@
                             <td>{{ income.period|format_date(locale='fr', pattern='MMMM yyyy')|capitalize }}</td>
                             {% if income.id %}
                                 <td>{{ income.description }}</td>
-                                <td
-                                    {% if loop.last and contract.receptionDelayed %}
-                                        class="bg-secondary"
-                                    {% endif %}
-                                >
-                                    {% if not loop.last or not contract.receptionDelayed %}
+                                {% if not income.isPlanned %}
+                                    <td class="bg-secondary"></td>
+                                {% elseif income.planned is null %}
+                                    <td class="fst-italic text-muted">N/A</td>
+                                {% else %}
+                                    <td>
+                                        {{ income.planned }}
                                         {% if contract.account.individualPrice %}
-                                            {{ income.planned|round }} x {{ contract.account.individualPrice }}
-                                        {% else %}
-                                            {{ income.planned }}
+                                            x {{ contract.account.individualPrice }}
                                         {% endif %}
                                         €
-                                    {% endif %}
-                                </td>
-                                <td
-                                    {% if (loop.first and contract.billingDelayed) or
-                                          (loop.last and contract.receptionDelayed) %}
-                                        class="bg-secondary"
-                                    {% endif %}
-                                >
-                                    {% if (not loop.first or not contract.billingDelayed) and
-                                          (not loop.last or not contract.receptionDelayed) %}
+                                    </td>
+                                {% endif %}
+
+                                {% if not income.isBilled %}
+                                    <td class="bg-secondary"></td>
+                                {% elseif income.billed is null %}
+                                    <td class="fst-italic text-muted">N/A</td>
+                                {% else %}
+                                    <td>
+                                        {{ income.billed }}
                                         {% if contract.account.individualPrice %}
-                                            {{ income.billed|round }} x {{ contract.account.individualPrice }}
-                                        {% else %}
-                                            {{ income.billed }}
+                                            x {{ contract.account.individualPrice }}
                                         {% endif %}
                                         €
-                                    {% endif %}
-                                </td>
-                                <td
-                                    {% if loop.first and contract.receptionDelayed %}
-                                        class="bg-secondary"
-                                    {% endif %}
-                                >
-                                    {% if not loop.first or not contract.receptionDelayed %}
+                                    </td>
+                                {% endif %}
+
+                                {% if not income.isReceived %}
+                                    <td class="bg-secondary"></td>
+                                {% elseif income.received is null %}
+                                    <td class="fst-italic text-muted">N/A</td>
+                                {% else %}
+                                    <td>
+                                        {{ income.received }}
                                         {% if contract.account.individualPrice %}
-                                            {{ income.received|round }} x {{ contract.account.individualPrice }}
-                                        {% else %}
-                                            {{ income.received }}
+                                            x {{ contract.account.individualPrice }}
                                         {% endif %}
                                         €
-                                    {% endif %}
-                                </td>
+                                    </td>
+                                {% endif %}
                             {% else %}
                                 <td colspan="4" class="fst-italic text-center text-muted">Pas de versement</td>
                             {% endif %}
@@ -99,19 +96,18 @@
                         <td colspan="2" class="text-end">Total</td>
                         <td>
                             {% if contract.account.individualPrice %}
-                                {{ totalPlanned|round }} x {{ contract.account.individualPrice }}
+                                {{ totalPlanned }} x {{ contract.account.individualPrice }}
                             {% else %}
                                 {{ totalPlanned }}
                             {% endif %}
                             €
 
                             {% if offsetPlanned != 0 %}
-                                (+
-                                {% if contract.account.individualPrice %}
-                                    {{ offsetPlanned|round }})
-                                {% else %}
-                                    {{ offsetPlanned }} €)
+                                (+ {{ offsetPlanned }}
+                                {% if not contract.account.individualPrice %}
+                                    €
                                 {% endif %}
+                                )
                             {% endif %}
                         </td>
                         <td
@@ -122,19 +118,18 @@
                             {% endif %}
                         >
                             {% if contract.account.individualPrice %}
-                                {{ totalBilled|round }} x {{ contract.account.individualPrice }}
+                                {{ totalBilled }} x {{ contract.account.individualPrice }}
                             {% else %}
                                 {{ totalBilled }}
                             {% endif %}
                             €
 
                             {% if offsetBilled != 0 %}
-                                (+
-                                {% if contract.account.individualPrice %}
-                                    {{ offsetBilled|round }})
-                                {% else %}
-                                    {{ offsetBilled }} €)
+                                (+ {{ offsetBilled }}
+                                {% if not contract.account.individualPrice %}
+                                    €
                                 {% endif %}
+                                )
                             {% endif %}
                         </td>
                         <td
@@ -145,19 +140,18 @@
                             {% endif %}
                         >
                             {% if contract.account.individualPrice %}
-                                {{ totalReceived|round }} x {{ contract.account.individualPrice }}
+                                {{ totalReceived }} x {{ contract.account.individualPrice }}
                             {% else %}
                                 {{ totalReceived }}
                             {% endif %}
                             €
 
                             {% if offsetReceived != 0 %}
-                                (+
-                                {% if contract.account.individualPrice %}
-                                    {{ offsetReceived|round }})
-                                {% else %}
-                                    {{ offsetReceived }} €)
+                                (+ {{ offsetReceived }}
+                                {% if not contract.account.individualPrice %}
+                                    €
                                 {% endif %}
+                                )
                             {% endif %}
                         </td>
                     </tr>

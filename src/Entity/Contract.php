@@ -40,7 +40,11 @@ class Contract
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2, nullable: true)]
     #[Groups(['contract:read'])]
-    private ?string $monthly_amount = null;
+    private ?string $amount = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['contract:read'])]
+    private ?string $frequency = null;
 
     #[ORM\Column]
     #[Groups(['contract:read'])]
@@ -131,14 +135,26 @@ class Contract
         }
     }
 
-    public function getMonthlyAmount(): ?string
+    public function getAmount(): ?string
     {
-        return $this->monthly_amount;
+        return $this->amount;
     }
 
-    public function setMonthlyAmount(?string $monthly_amount): self
+    public function setAmount(string $amount): self
     {
-        $this->monthly_amount = $monthly_amount;
+        $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getFrequency(): ?string
+    {
+        return $this->frequency;
+    }
+
+    public function setFrequency(string $frequency): self
+    {
+        $this->frequency = $frequency;
 
         return $this;
     }

@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -53,12 +54,19 @@ class ContractType extends AbstractType
                 'required' => false,
                 'widget' => 'single_text',
             ])
-            ->add('monthly_amount', NumberType::class, [
+            ->add('amount', NumberType::class, [
                 'help' => 'Laisser vide si le montant est variable (Forfait réel)',
                 'label' => 'Montant mensuel',
-                'required' => false,
                 'constraints' => [
                     new Positive(),
+                ],
+            ])
+            ->add('frequency', ChoiceType::class, [
+                'label' => 'Fréquence',
+                'required' => true,
+                'choices' => [
+                    'Mensuel' => 'monthly',
+                    'Journalier' => 'daily',
                 ],
             ])
             ->add('reception_delayed', CheckboxType::class, [

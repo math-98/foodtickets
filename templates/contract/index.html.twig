@@ -33,17 +33,20 @@
                         <td>
                             <ul>
                                 <li>Versement sur : {{ contract.account.name }}</li>
-                                {% if contract.monthlyAmount is not null %}
-                                    <li>
-                                        Montant mensuel :
-                                        {% if contract.account.individualPrice %}
-                                            {{ contract.monthlyAmount|round }} x {{ contract.account.individualPrice }}
-                                        {% else %}
-                                            {{ contract.monthlyAmount }}
-                                        {% endif %}
-                                        €
-                                    </li>
-                                {% endif %}
+                                <li>
+                                    Montant
+                                    {% if contract.frequency == 'monthly' %}
+                                        mensuel
+                                    {% elseif contract.frequency == 'daily' %}
+                                        journalier
+                                    {% endif %}
+                                    :
+                                    {{ contract.amount }}
+                                    {% if contract.account.individualPrice %}
+                                        x {{ contract.account.individualPrice }}
+                                    {% endif %}
+                                    €
+                                </li>
                                 {% if contract.receptionDelayed %}
                                     <li>Réception le mois suivant</li>
                                 {% endif %}

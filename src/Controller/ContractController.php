@@ -38,8 +38,8 @@ class ContractController extends AbstractController
         if ($form->isSubmitted()) {
             $form->get('monthly_amount')->addError(new FormError('test'));
             if ($form->isValid()) {
-                if ($contract->getMonthlyAmount() && $contract->getAccount()->getIndividualPrice()) {
-                    $contract->setMonthlyAmount(floor($contract->getAccount()->getIndividualPrice()));
+                if ($contract->getAmount() && $contract->getAccount()->getIndividualPrice()) {
+                    $contract->setAmount(floor($contract->getAmount()));
                 }
                 $contractRepository->save($contract, true);
 

@@ -11,14 +11,14 @@
                     :contract="{{ form.vars.data|serialize('json', { groups: 'contract:read' }) }}"
                     :errors="{
                         name: '{{ form.name.vars.errors|serialize('json') }}',
-                        monthly_amount: '{{ form.monthly_amount.vars.errors|serialize('json') }}',
+                        amount: '{{ form.amount.vars.errors|serialize('json') }}',
                     }"
                 ></contract-form>
                 {% do form.name.setRendered %}
                 {% do form.account.setRendered %}
                 {% do form.start.setRendered %}
                 {% do form.end.setRendered %}
-                {% do form.monthly_amount.setRendered %}
+                {% do form.amount.setRendered %}
                 {% do form.billing_delayed.setRendered %}
                 {% do form.reception_delayed.setRendered %}
 
