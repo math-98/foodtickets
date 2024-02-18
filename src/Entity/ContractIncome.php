@@ -146,7 +146,11 @@ class ContractIncome
 
     public function getIsPlanned(): bool
     {
-        return !$this->isLatestPeriod() || !$this->contract->isReceptionDelayed();
+        if ($this->isLatestPeriod()) {
+            return !$this->contract->isBillingDelayed() || !$this->contract->isReceptionDelayed();
+        }
+
+        return true;
     }
 
     public function getBilled(): ?float
@@ -181,7 +185,7 @@ class ContractIncome
         if ($this->isFirstPeriod()) {
             $isBilled = !$this->contract->isBillingDelayed();
         } elseif ($this->isLatestPeriod()) {
-            $isBilled = !$this->contract->isReceptionDelayed();
+            $isBilled = $this->contract->isBillingDelayed() || !$this->contract->isReceptionDelayed();
         }
 
         return $isBilled;

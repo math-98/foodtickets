@@ -34,38 +34,40 @@ class ContractIncomeController extends AbstractController
         $totalReceived = 0;
         $offsetReceived = 0;
 
-        if (count($incomes)) {
-            foreach ($incomes as $income) {
-                $totalPlanned += $income->getPlanned();
-                $totalBilled += $income->getBilled();
-                $totalReceived += $income->getReceived();
-            }
+        foreach ($incomes as $income) {
+            $totalPlanned += $income->getPlanned();
+            $totalBilled += $income->getBilled();
+            $totalReceived += $income->getReceived();
+        }
 
-            $lastIncome = end($incomes);
-            if ($contract->isReceptionDelayed() || $contract->isBillingDelayed()) {
+        if (is_null($contract->getLastPeriod()) || date_create() < $contract->getLastPeriod()) {
+            $end = date_create();
+
+            if (count($incomes)) {
+                $lastIncome = end($incomes);
+
                 $offsetPlanned = $lastIncome->getPlanned();
+                if (count($incomes) > 1) {
+                    $prevIncome = prev($incomes);
+                    $offsetPlanned += $prevIncome->getPlanned();
+                }
                 $totalPlanned -= $offsetPlanned;
 
-                if (!$contract->isBillingDelayed()) {
+                if ($contract->isBillingDelayed()) {
                     $offsetBilled = $lastIncome->getBilled();
                     $totalBilled -= $offsetBilled;
                 }
-                if (!$contract->isReceptionDelayed()) {
+                if ($contract->isReceptionDelayed()) {
                     $offsetReceived = $lastIncome->getReceived();
                     $totalReceived -= $offsetReceived;
                 }
             }
-        }
-
-        $date = clone $contract->getStart();
-        if (is_null($contract->getLastPeriod()) || date_create() < $contract->getLastPeriod()) {
-            $end = date_create();
         } else {
             $end = $contract->getLastPeriod();
         }
-        if ($contract->isReceptionDelayed() || $contract->isBillingDelayed()) {
-            $end->modify('+1 month');
-        }
+
+        $date = clone $contract->getStart();
+        $date->modify('first day of this month');
         while ($date <= $end) {
             if (!isset($incomes[$date->format('Y-m')])) {
                 $income = new ContractIncome();
@@ -108,33 +110,49 @@ class ContractIncomeController extends AbstractController
             $fmt = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
             $fmt->setPattern('MMMM yyyy');
             $income->setDescription('Millésime '.ucfirst($fmt->format($periodObj)));
+        }
 
-            if ($income->getIsPlanned()) {
-                if ($income->getContract()->getMonthlyAmount()) {
-                    $income->setPlanned($income->getContract()->getMonthlyAmount());
-                } else {
-                    $start = ($income->isFirstPeriod()) ? clone $income->getContract()->getStart() : $income->getPeriod();
-                    $end = ($income->isLatestPeriod()) ? $income->getContract()->getEnd() : (clone $income->getPeriod())->modify('+1 month');
-                    $days = 0;
-                    while ($start < $end) {
-                        if ($start->format('N') < 6) {
-                            ++$days;
-                        }
-                        $start->modify('+1 day');
+        if ($income->getIsPlanned() && is_null($income->getPlanned())) {
+            $amount = $income->getContract()->getAmount();
+            if ('daily' == $income->getContract()->getFrequency()) {
+                $start = clone max(
+                    $income->getContract()->getStart(),
+                    $income->getPeriod()
+                );
+                $end = (clone $income->getPeriod())->modify('+1 month');
+                if ($income->getContract()->getEnd() && $end > $income->getContract()->getEnd()) {
+                    $end = $income->getContract()->getEnd();
+                }
+
+                $planned = 0;
+                while ($start < $end) {
+                    if ($start->format('N') < 6) {
+                        ++$planned;
                     }
-                    $income->setPlanned($days);
+                    $start->modify('+1 day');
                 }
-            }
 
-            $lastPeriodObj = (clone $periodObj)->modify('-1 month');
-            $last_period = $contractIncomeRepository->getContractIncomeByMonth($contract, $lastPeriodObj);
-            if (!$income->isFirstPeriod() && $last_period) {
-                if ($income->getContract()->isReceptionDelayed() && $income->getIsReceived()) {
-                    $income->setReceived($last_period->getPlanned());
-                }
-                if ($income->getContract()->isBillingDelayed() && $income->getIsBilled()) {
-                    $income->setBilled($last_period->getReceived());
-                }
+                $amount *= $planned;
+            }
+            $income->setPlanned($amount);
+        }
+
+        $lastPeriodObj = (clone $periodObj)->modify('-1 month');
+        $last_period = $contractIncomeRepository->getContractIncomeByMonth($contract, $lastPeriodObj);
+        if (!$income->isFirstPeriod() && $last_period) {
+            if (
+                $income->getContract()->isReceptionDelayed()
+                && $income->getIsReceived()
+                && is_null($income->getReceived())
+            ) {
+                $income->setReceived($last_period->getPlanned());
+            }
+            if (
+                $income->getContract()->isBillingDelayed()
+                && $income->getIsBilled()
+                && is_null($income->getBilled())
+            ) {
+                $income->setBilled($last_period->getPlanned());
             }
         }
 
