@@ -30,9 +30,9 @@ class Account
     #[Groups(['account:read'])]
     private ?string $color = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2, nullable: true)]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Groups(['account:read'])]
-    private ?float $individual_price = null;
+    private ?int $individual_price = null;
 
     #[ORM\OneToMany(mappedBy: 'account', targetEntity: Contract::class)]
     private Collection $contracts;
@@ -77,11 +77,19 @@ class Account
 
     public function getIndividualPrice(): ?float
     {
-        return $this->individual_price;
+        $individual_price = $this->individual_price;
+        if (!is_null($individual_price)) {
+            $individual_price /= 100;
+        }
+
+        return $individual_price;
     }
 
-    public function setIndividualPrice(?string $individual_price): self
+    public function setIndividualPrice(?float $individual_price): self
     {
+        if (!is_null($individual_price)) {
+            $individual_price *= 100;
+        }
         $this->individual_price = $individual_price;
 
         return $this;
@@ -161,7 +169,7 @@ class Account
             return $balance + $transaction->getAmount();
         }, 0.0);
 
-        return round($balance, 2);
+        return $balance;
     }
 
     public function getUser(): ?User

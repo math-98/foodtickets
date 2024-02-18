@@ -38,9 +38,9 @@ class Contract
     #[Groups(['contract:read'])]
     private ?\DateTimeInterface $end = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2, nullable: true)]
+    #[ORM\Column(type: Types::INTEGER)]
     #[Groups(['contract:read'])]
-    private ?string $amount = null;
+    private ?int $amount = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['contract:read'])]
@@ -135,13 +135,21 @@ class Contract
         }
     }
 
-    public function getAmount(): ?string
+    public function getAmount(): ?float
     {
-        return $this->amount;
+        $amount = $this->amount;
+        if (!$this->account->getIndividualPrice()) {
+            $amount /= 100;
+        }
+
+        return $amount;
     }
 
-    public function setAmount(string $amount): self
+    public function setAmount(float $amount): self
     {
+        if (!$this->account->getIndividualPrice()) {
+            $this->amount *= 100;
+        }
         $this->amount = $amount;
 
         return $this;

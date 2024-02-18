@@ -28,17 +28,17 @@ class ContractIncome
     #[Groups(['income:read'])]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Groups(['income:read'])]
-    private ?float $planned = null;
+    private ?int $planned = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Groups(['income:read'])]
-    private ?float $billed = null;
+    private ?int $billed = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Groups(['income:read'])]
-    private ?float $received = null;
+    private ?int $received = null;
 
     public function getId(): ?int
     {
@@ -120,15 +120,23 @@ class ContractIncome
 
     public function getPlanned(): ?float
     {
-        return $this->planned;
+        $planned = $this->planned;
+        if (!$planned) {
+            return $planned;
+        }
+        if (!$this->getContract()->getAccount()->getIndividualPrice()) {
+            $planned /= 100;
+        }
+
+        return $planned;
     }
 
-    public function setPlanned(float $planned): self
+    public function setPlanned(?float $planned): self
     {
-        if (!$this->getIsPlanned()) {
-            $this->planned = 0;
-        } elseif ($this->contract->getAccount()->getIndividualPrice()) {
-            $this->planned = floor($planned);
+        if (!$this->getIsPlanned() || is_null($planned)) {
+            $this->planned = null;
+        } elseif (!$this->contract->getAccount()->getIndividualPrice()) {
+            $this->planned = $planned * 100;
         } else {
             $this->planned = $planned;
         }
@@ -143,15 +151,23 @@ class ContractIncome
 
     public function getBilled(): ?float
     {
-        return $this->billed;
+        $billed = $this->billed;
+        if (!$billed) {
+            return $billed;
+        }
+        if (!$this->getContract()->getAccount()->getIndividualPrice()) {
+            $billed /= 100;
+        }
+
+        return $billed;
     }
 
-    public function setBilled(float $billed): self
+    public function setBilled(?float $billed): self
     {
-        if (!$this->getIsBilled()) {
-            $this->billed = 0;
-        } elseif ($this->contract->getAccount()->getIndividualPrice()) {
-            $this->billed = floor($billed);
+        if (!$this->getIsBilled() || is_null($billed)) {
+            $this->billed = null;
+        } elseif (!$this->contract->getAccount()->getIndividualPrice()) {
+            $this->billed = $billed * 100;
         } else {
             $this->billed = $billed;
         }
@@ -173,15 +189,23 @@ class ContractIncome
 
     public function getReceived(): ?float
     {
-        return $this->received;
+        $received = $this->received;
+        if (!$received) {
+            return $received;
+        }
+        if (!$this->getContract()->getAccount()->getIndividualPrice()) {
+            $received /= 100;
+        }
+
+        return $received;
     }
 
-    public function setReceived(float $received): self
+    public function setReceived(?float $received): self
     {
-        if (!$this->getIsReceived()) {
-            $this->received = 0;
-        } elseif ($this->contract->getAccount()->getIndividualPrice()) {
-            $this->received = floor($received);
+        if (!$this->getIsReceived() || is_null($received)) {
+            $this->received = null;
+        } elseif (!$this->contract->getAccount()->getIndividualPrice()) {
+            $this->received = $received * 100;
         } else {
             $this->received = $received;
         }

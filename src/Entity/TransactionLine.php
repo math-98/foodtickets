@@ -25,9 +25,9 @@ class TransactionLine
     #[ORM\JoinColumn(nullable: false)]
     private ?Account $account = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
+    #[ORM\Column(type: Types::INTEGER)]
     #[Groups(['transaction:read'])]
-    private ?float $amount = null;
+    private ?int $amount = null;
 
     public function getId(): ?int
     {
@@ -66,11 +66,18 @@ class TransactionLine
 
     public function getAmount(): ?float
     {
+        if (!$this->account->getIndividualPrice()) {
+            return $this->amount / 100;
+        }
+
         return $this->amount;
     }
 
     public function setAmount(string $amount): self
     {
+        if ($this->account->getIndividualPrice()) {
+            $amount = $amount * 100;
+        }
         $this->amount = $amount;
 
         return $this;
